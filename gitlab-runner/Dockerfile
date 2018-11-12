@@ -3,6 +3,7 @@ FROM ubuntu:16.04
 ENV GCLOUD_SDK_VERSION=200.0.0
 ENV GCLOUD_SDK_URL=https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_SDK_VERSION}-linux-x86_64.tar.gz
 ENV PATH="${PATH}:/opt/google-cloud-sdk/bin"
+ENV TERM=xterm
 
 ARG ANSIBLE_VERSION=2.6.2~ubuntu16.04.1
 ARG KOPS_VERSION=1.9.0
@@ -27,7 +28,16 @@ RUN apt-get update                                          \
     python-pip                                              \
     bash                                                    \
     sudo                                                    \
-    software-properties-common
+    software-properties-common                              \
+    apt-transport-https
+
+#Install azure cli
+RUN AZ_REPO=$(lsb_release -cs)
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ xenial main" | \
+    sudo tee /etc/apt/sources.list.d/azure-cli.list
+RUN curl -L https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+RUN sudo apt-get update
+RUN sudo apt-get install apt-transport-https azure-cli -y
 
 # Update pip version
 RUN pip install --upgrade pip

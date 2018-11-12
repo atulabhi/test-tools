@@ -172,6 +172,13 @@ logger: deps _build_logger_image _push_logger_image
 
 build: deps vdbench fio iometer mysql-client tpcc-client mongo-client jenkins-client postgres-client custom-client libiscsi logger 
 
+_build_gitlab_runner_infra_image:
+	@echo "INFO: Building container image for gitlab-runner-infra"
+	cd gitlab-runner/buildscripts && ./build.sh
+_push_gitlab_runner_infra_image:
+	@echo "INFO: Publish container (openebs/infra)"
+	cd logger/buildscripts && ./push 
+gitlab-runner: deps _build_gitlab_runner_infra_image _push_gitlab_runner_infra_image
 
 # This is done to avoid conflict with a file of same name as the targets
 # mentioned in this makefile 
